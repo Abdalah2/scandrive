@@ -1,0 +1,5 @@
+[
+  { "id": "rdv-1", "carId": "car-002", "clientId": "user-001", "sellerId": "user-202", "agencyId": "agency-2", "date": "2026-07-16", "time": "10:30", "type": "Essai routier", "status": "Confirmé" },
+  { "id": "rdv-2", "carId": "car-005", "clientId": "user-301", "sellerId": "user-203", "agencyId": "agency-2", "date": "2026-07-18", "time": "15:00", "type": "Visite", "status": "En attente" },
+  { "id": "rdv-3", "carId": "car-014", "clientId": "user-001", "sellerId": "user-203", "agencyId": "agency-1", "date": "2026-07-20", "time": "11:00", "type": "Essai routier", "status": "En attente" }
+]

@@ -1,0 +1,6 @@
+[
+  { "id": "agency-1", "name": "ScanDrive Casablanca Centre", "city": "Casablanca", "address": "Boulevard Anfa, Casablanca", "phone": "+212 5 22 00 11 22", "hours": "08:30 - 19:00" },
+  { "id": "agency-2", "name": "ScanDrive Rabat Agdal", "city": "Rabat", "address": "Avenue Fal Ould Oumeir, Rabat", "phone": "+212 5 37 00 22 33", "hours": "09:00 - 19:30" },
+  { "id": "agency-3", "name": "ScanDrive Marrakech Gueliz", "city": "Marrakech", "address": "Rue Mohammed V, Marrakech", "phone": "+212 5 24 00 44 55", "hours": "09:00 - 18:30" },
+  { "id": "agency-4", "name": "ScanDrive Tanger Marina", "city": "Tanger", "address": "Corniche de Tanger, Tanger", "phone": "+212 5 39 00 66 77", "hours": "08:00 - 18:00" }
+]
