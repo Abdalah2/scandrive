@@ -2,7 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import PublicLayout from '../components/layout/PublicLayout';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import PrivateRoute from './PrivateRoute';
-import { LandingPage, CarListPage, CarDetailPage, LoginPage, RegisterPage, ContactPage, ForbiddenPage, NotFoundPage } from '../pages/public';
+import { LandingPage, CarListPage, CarDetailPage, ShowroomScanPage, LoginPage, RegisterPage, ContactPage, ForbiddenPage, NotFoundPage } from '../pages/public';
 import { ClientDashboard, FavoritesPage, ComparePage, RdvPage, MessagesPage, ClientProfilePage } from '../pages/client';
 import { VendeurDashboard, MyCarsPage, VendeurRdvPage, VendeurMessagesPage } from '../pages/vendeur';
 import { AdminDashboard, ManageCarsPage, ManageUsersPage, ManageAgencesPage, StatsPage, QRGeneratorPage } from '../pages/admin';
@@ -13,6 +13,7 @@ export default function AppRouter() {
       <Route element={<PublicLayout />}>
         <Route index element={<LandingPage />} />
         <Route path="cars" element={<CarListPage />} />
+        <Route path="showroom" element={<ShowroomScanPage />} />
         <Route path="car/:id" element={<CarDetailPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />

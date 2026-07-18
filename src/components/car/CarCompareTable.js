@@ -6,12 +6,12 @@ export default function CarCompareTable({ cars }) {
   }
 
   const rows = [
-    { label: 'Prix', get: (car) => `${car.price?.toLocaleString('fr-FR')} MAD` },
+    { label: 'Prix', get: (car) => `${car.price?.toLocaleString('fr-TN')} TND` },
     { label: 'Année', get: (car) => car.year },
     { label: 'Carburant', get: (car) => car.fuel },
     { label: 'Boîte', get: (car) => car.transmission },
     { label: 'Ville', get: (car) => car.city },
-    { label: 'Kilométrage', get: (car) => `${car.mileage?.toLocaleString('fr-FR')} km` },
+    { label: 'Kilométrage', get: (car) => `${car.mileage?.toLocaleString('fr-TN')} km` },
     { label: 'Statut', get: (car) => <Badge tone={car.status === 'Disponible' ? 'success' : 'accent'}>{car.status}</Badge> },
   ];
 

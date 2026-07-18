@@ -1,7 +1,7 @@
 export function formatPrice(amount) {
-  return new Intl.NumberFormat('fr-MA', {
+  return new Intl.NumberFormat('fr-TN', {
     style: 'currency',
-    currency: 'MAD',
+    currency: 'TND',
     maximumFractionDigits: 0,
   }).format(amount);
 }

@@ -13,10 +13,12 @@ import { useAppData } from '../../context/AppDataContext';
 import { useAuth } from '../../context/AuthContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useCompare } from '../../context/CompareContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { formatDate } from '../../utils/formatDate';
 
 export function ClientDashboard() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const { cars, rendezvous, messages } = useAppData();
   const { favorites } = useFavorites();
   const unread = messages.filter((message) => message.to === user?.id && !message.read).length;
@@ -33,15 +35,15 @@ export function ClientDashboard() {
 
       <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
         <Card>
-          <p className="text-sm font-semibold text-brand-700">Recommandations</p>
-          <h2 className="mt-2 text-2xl font-bold text-slate-950">Véhicules favoris et suggestions rapides</h2>
+          <p className="text-sm font-semibold text-brand-700">{t.clientDashboardTitle}</p>
+          <h2 className="mt-2 text-2xl font-bold text-slate-950">{t.favoritesTitle}</h2>
           <div className="mt-5 grid gap-4 md:grid-cols-2">
             {favoriteCars.length ? favoriteCars.map((car) => <CarCard key={car.id} car={car} />) : <EmptyState title="Aucun favori" description="Ajoutez des voitures depuis le catalogue pour les retrouver ici." />}
           </div>
         </Card>
 
         <Card>
-          <p className="text-sm font-semibold text-brand-700">RDV à venir</p>
+          <p className="text-sm font-semibold text-brand-700">{t.appointmentsTitle}</p>
           <div className="mt-4 space-y-3">
             {upcoming.length ? upcoming.map((rdv) => (
               <div key={rdv.id} className="rounded-3xl bg-slate-50 p-4">
@@ -73,6 +75,7 @@ export function FavoritesPage() {
 
 export function ComparePage() {
   const { cars } = useAppData();
+  const { t } = useLanguage();
   const { compareIds, toggleCompare, isCompared } = useCompare();
   const selected = cars.filter((car) => compareIds.includes(car.id));
 
@@ -82,7 +85,7 @@ export function ComparePage() {
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-sm font-semibold text-brand-700">Comparateur</p>
-            <h1 className="text-2xl font-bold text-slate-950">Comparer jusqu’à 4 véhicules</h1>
+            <h1 className="text-2xl font-bold text-slate-950">{t.compareTitle}</h1>
           </div>
           <Badge tone="brand">{selected.length}/4</Badge>
         </div>
@@ -103,6 +106,7 @@ export function RdvPage() {
   const [searchParams] = useSearchParams();
   const { cars, agencies, addAppointment } = useAppData();
   const { user } = useAuth();
+  const { t, language } = useLanguage();
   const [form, setForm] = useState({ carId: searchParams.get('carId') || cars[0]?.id || '', agencyId: agencies[0]?.id || '', date: '', time: '10:00', type: 'Essai routier', sellerId: 'user-202' });
   const signatureRef = useRef(null);
 
@@ -123,8 +127,8 @@ export function RdvPage() {
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_0.8fr]">
       <Card>
-        <p className="text-sm font-semibold text-brand-700">Prise de RDV</p>
-        <h1 className="mt-2 text-2xl font-bold text-slate-950">Essai routier ou visite agence</h1>
+        <p className="text-sm font-semibold text-brand-700">{t.appointmentsTitle}</p>
+        <h1 className="mt-2 text-2xl font-bold text-slate-950">{t.rdvTitle}</h1>
         <form className="mt-6 grid gap-4" onSubmit={submit}>
           <Field label="Voiture" as="select" value={form.carId} onChange={(event) => setForm((current) => ({ ...current, carId: event.target.value }))} options={cars.map((car) => ({ value: car.id, label: `${car.make} ${car.model}` }))} />
           <div className="grid gap-4 md:grid-cols-2">
@@ -134,20 +138,20 @@ export function RdvPage() {
           <Field label="Agence" as="select" value={form.agencyId} onChange={(event) => setForm((current) => ({ ...current, agencyId: event.target.value }))} options={agencies.map((agency) => ({ value: agency.id, label: `${agency.name} - ${agency.city}` }))} />
           <Field label="Type de rendez-vous" as="select" value={form.type} onChange={(event) => setForm((current) => ({ ...current, type: event.target.value }))} options={[{ value: 'Essai routier', label: 'Essai routier' }, { value: 'Visite', label: 'Visite' }, { value: 'Paiement', label: 'Paiement en ligne' }]} />
           <div className="grid gap-3 rounded-3xl bg-slate-50 p-4">
-            <div className="flex items-center gap-2 text-sm font-semibold text-slate-700"><PenLine className="h-4 w-4" />Signature électronique simulée</div>
+            <div className="flex items-center gap-2 text-sm font-semibold text-slate-700"><PenLine className="h-4 w-4" />{language === 'ar' ? 'التوقيع الإلكتروني التجريبي' : 'Signature électronique simulée'}</div>
             <SignatureCanvas ref={signatureRef} penColor="#102b4f" canvasProps={{ className: 'h-40 w-full rounded-2xl bg-white border border-slate-200' }} />
-            <Button type="button" variant="secondary" className="gap-2" onClick={() => signatureRef.current?.clear()}><RotateCcw className="h-4 w-4" />Effacer</Button>
+            <Button type="button" variant="secondary" className="gap-2" onClick={() => signatureRef.current?.clear()}><RotateCcw className="h-4 w-4" />{t.cancel}</Button>
           </div>
-          <Button type="submit" className="gap-2"><Send className="h-4 w-4" />Créer le RDV</Button>
+          <Button type="submit" className="gap-2"><Send className="h-4 w-4" />{t.save}</Button>
         </form>
       </Card>
 
       <Card>
         <p className="text-sm font-semibold text-brand-700">Aperçu</p>
         <div className="mt-4 space-y-3 text-sm text-slate-600">
-          <p>Client: {user?.name || 'Client démo'}</p>
-          <p>Voiture: {cars.find((car) => car.id === form.carId)?.make} {cars.find((car) => car.id === form.carId)?.model}</p>
-          <p>Agence: {agencies.find((agency) => agency.id === form.agencyId)?.name}</p>
+          <p>{language === 'ar' ? 'العميل' : 'Client'}: {user?.name || 'Client démo'}</p>
+          <p>{language === 'ar' ? 'السيارة' : 'Voiture'}: {cars.find((car) => car.id === form.carId)?.make} {cars.find((car) => car.id === form.carId)?.model}</p>
+          <p>{language === 'ar' ? 'الوكالة' : 'Agence'}: {agencies.find((agency) => agency.id === form.agencyId)?.name}</p>
           <p>Type: {form.type}</p>
         </div>
         <div className="mt-5 rounded-3xl bg-brand-50 p-4 text-sm text-brand-900">
@@ -161,6 +165,7 @@ export function RdvPage() {
 export function MessagesPage() {
   const { messages, users, sendMessage, markThreadRead } = useAppData();
   const { user } = useAuth();
+  const { t, language } = useLanguage();
   const [selectedThread, setSelectedThread] = useState('');
   const [reply, setReply] = useState('');
 
@@ -201,7 +206,7 @@ export function MessagesPage() {
   return (
     <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
       <Card>
-        <p className="text-sm font-semibold text-brand-700">Conversations</p>
+        <p className="text-sm font-semibold text-brand-700">{t.messagesTitle}</p>
         <div className="mt-4 space-y-3">
           {threads.length ? threads.map((thread) => {
             const latest = thread[thread.length - 1];
@@ -210,7 +215,7 @@ export function MessagesPage() {
               <button key={thread[0].threadId} onClick={() => setSelectedThread(thread[0].threadId)} className={`w-full rounded-3xl border p-4 text-left transition ${selectedThread === thread[0].threadId ? 'border-brand-300 bg-brand-50' : 'border-slate-200 bg-white hover:border-brand-200'}`}>
                 <div className="flex items-center justify-between gap-3">
                   <p className="font-semibold text-slate-950">{partner?.name || 'Conversation'}</p>
-                  {!latest.read ? <Badge tone="accent">Nouveau</Badge> : null}
+                  {!latest.read ? <Badge tone="accent">{language === 'ar' ? 'جديد' : 'Nouveau'}</Badge> : null}
                 </div>
                 <p className="mt-2 text-sm text-slate-600 line-clamp-2">{latest.text}</p>
               </button>
@@ -233,8 +238,8 @@ export function MessagesPage() {
         </div>
 
         <form className="mt-4 grid gap-3" onSubmit={submit}>
-          <textarea value={reply} onChange={(event) => setReply(event.target.value)} className="min-h-28 rounded-3xl border border-slate-200 px-4 py-3 outline-none focus:border-brand-300" placeholder="Écrire une réponse..." />
-          <Button type="submit" className="gap-2"><Send className="h-4 w-4" />Envoyer</Button>
+          <textarea value={reply} onChange={(event) => setReply(event.target.value)} className="min-h-28 rounded-3xl border border-slate-200 px-4 py-3 outline-none focus:border-brand-300" placeholder={language === 'ar' ? 'اكتب ردًا...' : 'Écrire une réponse...'} />
+          <Button type="submit" className="gap-2"><Send className="h-4 w-4" />{language === 'ar' ? 'إرسال' : 'Envoyer'}</Button>
         </form>
       </Card>
     </div>
@@ -244,6 +249,7 @@ export function MessagesPage() {
 export function ClientProfilePage() {
   const { user } = useAuth();
   const { rendezvous } = useAppData();
+  const { t } = useLanguage();
   const history = rendezvous.filter((rdv) => rdv.clientId === user?.id);
 
   return (
@@ -264,7 +270,7 @@ export function ClientProfilePage() {
       </Card>
 
       <Card>
-        <p className="text-sm font-semibold text-brand-700">Historique simulé</p>
+        <p className="text-sm font-semibold text-brand-700">{t.profileTitle}</p>
         <div className="mt-4 space-y-3">
           {history.length ? history.map((rdv) => (
             <div key={rdv.id} className="rounded-3xl bg-slate-50 p-4">

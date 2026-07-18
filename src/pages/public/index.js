@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams, useSearchParams, Link } from 'react-router-dom';
 import { Bot, CalendarDays, CheckCircle2, Sparkles, ScanSearch, ArrowRight, Download, Printer, Mail, Phone, MapPinned } from 'lucide-react';
 import { jsPDF } from 'jspdf';
@@ -15,9 +15,11 @@ import { useAppData } from '../../context/AppDataContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useCompare } from '../../context/CompareContext';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { formatPrice } from '../../utils/formatPrice';
 import { generateQrUrl } from '../../utils/generateQrUrl';
 import { paginate, useMockApi } from '../../hooks/useMockApi';
+import BrandMark from '../../components/common/BrandMark';
 
 function estimateMarketPrice(car) {
   const agePenalty = Math.max(0.55, 1 - ((2026 - car.year) * 0.045));
@@ -43,47 +45,57 @@ export function LandingPage() {
   const { cars, agencies } = useAppData();
   const { data: loadedCars, loading } = useMockApi(cars, { delay: 520 });
   const navigate = useNavigate();
+  const { t, language } = useLanguage();
   const featured = loadedCars.filter((car) => car.featured).slice(0, 3);
   const stats = [
-    { value: `${cars.length}+`, label: 'voitures' },
-    { value: `${agencies.length}`, label: 'agences' },
-    { value: 'QR', label: 'scan direct' },
+    { value: `${cars.length}+`, label: t.statsVehicles },
+    { value: `${agencies.length}`, label: t.statsAgencies },
+    { value: 'QR', label: t.statsScan },
   ];
-  const [search, setSearch] = useState('SUV hybride à Casablanca');
+  const [search, setSearch] = useState(language === 'ar' ? 'SUV هجينة في تونس' : language === 'en' ? 'Hybrid SUV in Tunis' : 'SUV hybride à Tunis');
 
   return (
     <div className="space-y-8">
-      <section className="overflow-hidden rounded-[2rem] bg-[radial-gradient(circle_at_top_right,_rgba(255,159,28,0.22),_transparent_35%),linear-gradient(135deg,_#102b4f_0%,_#173f79_48%,_#0f172a_100%)] text-white shadow-soft">
+      <section className="overflow-hidden rounded-[2rem] bg-[radial-gradient(circle_at_top_right,_rgba(255,159,28,0.22),_transparent_35%),linear-gradient(135deg,_#102b4f_0%,_#173f79_48%,_#0f172a_100%)] text-white shadow-soft dark:border dark:border-slate-800 dark:bg-[radial-gradient(circle_at_top_right,_rgba(37,125,240,0.18),_transparent_35%),linear-gradient(135deg,_#08111f_0%,_#10253f_52%,_#050b14_100%)]">
         <div className="grid gap-10 px-6 py-10 lg:grid-cols-[1.1fr_0.9fr] lg:px-10 lg:py-14">
           <div className="space-y-6">
-            <Badge tone="accent" className="bg-white/10 text-white">Frontend 100% mocké</Badge>
+            <Badge tone="accent" className="bg-white/10 text-white">{t.heroBadge}</Badge>
             <div className="space-y-4">
+              <div className="flex flex-wrap items-center gap-3">
+                <BrandMark />
+                <div className="space-y-2">
+                  <p className="text-xs uppercase tracking-[0.35em] text-white/70">ScanDrive</p>
+                  <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs text-white/80 shadow-sm">
+                    {t.heroLocation}
+                  </span>
+                </div>
+              </div>
               <h1 className="max-w-2xl text-4xl font-bold leading-tight sm:text-5xl">
-                ScanDrive centralise la vente automobile autour du QR code et du mobile.
+                {t.heroTitle}
               </h1>
               <p className="max-w-xl text-base text-slate-200 sm:text-lg">
-                Parcours public, espace client, back-office vendeur et admin, le tout simulé localement avec données réelles de démo.
+                {t.heroText}
               </p>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
               <div className="rounded-3xl border border-white/10 bg-white/10 p-3 backdrop-blur">
-                <label className="sr-only" htmlFor="smart-search">Recherche intelligente</label>
-                <input id="smart-search" value={search} onChange={(event) => setSearch(event.target.value)} className="w-full bg-transparent px-2 py-3 text-sm text-white outline-none placeholder:text-slate-300" placeholder="Ex: SUV hybride à Casablanca, moins de 350000 MAD" />
+                <label className="sr-only" htmlFor="smart-search">{t.searchLabel}</label>
+                <input id="smart-search" value={search} onChange={(event) => setSearch(event.target.value)} className="w-full bg-transparent px-2 py-3 text-sm text-white outline-none placeholder:text-slate-300" placeholder={t.searchPlaceholder} />
               </div>
               <Button variant="accent" className="gap-2 px-6" onClick={() => navigate(`/cars?q=${encodeURIComponent(search)}`)}>
                 <ScanSearch className="h-4 w-4" />
-                Rechercher
+                {language === 'ar' ? 'بحث' : language === 'en' ? 'Search' : 'Recherche'}
               </Button>
             </div>
 
             <div className="flex flex-wrap gap-3">
               <Button variant="secondary" onClick={() => navigate('/register')} className="gap-2">
                 <Sparkles className="h-4 w-4" />
-                Commencer
+                {t.ctaStart}
               </Button>
               <Button variant="ghost" onClick={() => navigate('/cars')} className="border border-white/20 text-white hover:bg-white/10">
-                Voir le catalogue
+                {t.ctaCatalogue}
               </Button>
             </div>
 
@@ -98,19 +110,49 @@ export function LandingPage() {
           </div>
 
           <Card className="bg-white p-5">
-            <p className="text-sm font-semibold text-brand-700">Démo scan QR</p>
-            <h2 className="mt-2 text-2xl font-bold text-slate-950">Flux mobile-first pensé pour le scan en concession</h2>
-            <div className="mt-5 space-y-4">
-              {[
-                'Le client scanne un QR code sur la voiture.',
-                'La fiche publique se charge avec galerie, specs et actions.',
-                'Le RDV, le message et le comparateur sont disponibles immédiatement.',
-              ].map((step, index) => (
-                <div key={step} className="flex gap-3 rounded-2xl bg-slate-50 p-4">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-900 text-sm font-bold text-white">{index + 1}</div>
-                  <p className="text-sm text-slate-700">{step}</p>
+            <div className="flex flex-col gap-6 rounded-[2rem] bg-slate-950/95 p-6 text-white shadow-xl shadow-slate-900/10 sm:p-8">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-[0.32em] text-brand-300">QR showroom</p>
+                  <h2 className="mt-3 text-3xl font-bold">{t.scanSectionTitle}</h2>
                 </div>
-              ))}
+                <div className="rounded-3xl bg-brand-50 px-4 py-3 text-sm font-semibold text-brand-900">{t.trustedAgencies}</div>
+              </div>
+              <p className="max-w-xl text-sm leading-7 text-slate-300">{t.scanSectionSubtitle}</p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Button variant="accent" className="gap-2 px-6 py-4 text-base font-semibold" onClick={() => navigate('/showroom')}>
+                  <ScanSearch className="h-5 w-5" />
+                  {t.scanNow}
+                </Button>
+                <Button variant="secondary" className="gap-2 px-6 py-4 text-base font-semibold" onClick={() => navigate('/cars')}>
+                  <Sparkles className="h-5 w-5" />
+                  {t.exploreCatalog}
+                </Button>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-[1.2fr_0.8fr]">
+                <div className="rounded-3xl bg-white/10 p-5">
+                  <p className="text-xl font-semibold text-white">{t.showroomFlowTitle}</p>
+                  <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-300">
+                    <li>{t.showroomFlowStep1}</li>
+                    <li>{t.showroomFlowStep2}</li>
+                    <li>{t.showroomFlowStep3}</li>
+                  </ul>
+                </div>
+                <div className="rounded-[2rem] border border-white/10 bg-white/5 p-5 text-center">
+                  <div className="mx-auto mb-4 inline-flex h-28 w-28 items-center justify-center rounded-full bg-white/10 text-brand-200">
+                    <ScanSearch className="h-12 w-12" />
+                  </div>
+                  <p className="text-sm text-slate-300">{t.showroomFlowCaption}</p>
+                </div>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3">
+                {stats.map((stat) => (
+                  <div key={stat.label} className="rounded-3xl bg-white/10 p-4">
+                    <p className="text-3xl font-bold text-white">{stat.value}</p>
+                    <p className="text-sm text-slate-300">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </Card>
         </div>
@@ -159,6 +201,81 @@ export function LandingPage() {
             ))}
           </div>
         </Card>
+      </section>
+    </div>
+  );
+}
+
+export function ShowroomScanPage() {
+  const { cars } = useAppData();
+  const { t } = useLanguage();
+  const navigate = useNavigate();
+  const car = cars[0] || null;
+
+  return (
+    <div className="space-y-8">
+      <section className="overflow-hidden rounded-[2rem] bg-[radial-gradient(circle_at_top_right,_rgba(255,159,28,0.16),_transparent_35%),linear-gradient(135deg,_#0c1f33_0%,_#102b4f_48%,_#06121e_100%)] text-white shadow-soft dark:border dark:border-slate-800">
+        <div className="grid gap-10 px-6 py-10 lg:grid-cols-[1.1fr_0.9fr] lg:px-10 lg:py-14">
+          <div className="space-y-6">
+            <Badge tone="accent" className="bg-white/10 text-white">{t.scanSectionTitle}</Badge>
+            <div className="space-y-4">
+              <h1 className="max-w-2xl text-4xl font-bold leading-tight sm:text-5xl">{t.showroomFlowTitle}</h1>
+              <p className="max-w-xl text-base text-slate-200 sm:text-lg">{t.scanSectionSubtitle}</p>
+            </div>
+            <div className="grid gap-4 rounded-[2rem] bg-white/5 p-6 text-slate-100 shadow-lg shadow-slate-900/10">
+              <div className="space-y-3">
+                <p className="text-sm uppercase tracking-[0.24em] text-brand-300">Etape 1</p>
+                <p className="text-lg font-semibold">{t.showroomFlowStep1}</p>
+              </div>
+              <div className="space-y-3">
+                <p className="text-sm uppercase tracking-[0.24em] text-brand-300">Etape 2</p>
+                <p className="text-lg font-semibold">{t.showroomFlowStep2}</p>
+              </div>
+              <div className="space-y-3">
+                <p className="text-sm uppercase tracking-[0.24em] text-brand-300">Etape 3</p>
+                <p className="text-lg font-semibold">{t.showroomFlowStep3}</p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Button variant="accent" className="gap-2" onClick={() => car && navigate(`/car/${car.id}`)}>
+                <ScanSearch className="h-4 w-4" />
+                {car ? 'Voir la fiche scannée' : 'Voir le catalogue'}
+              </Button>
+              <Button variant="secondary" onClick={() => navigate('/cars')} className="gap-2">
+                <Sparkles className="h-4 w-4" />
+                {t.exploreCatalog}
+              </Button>
+            </div>
+            <p className="text-sm leading-7 text-slate-300">{t.showroomFlowCaption}</p>
+          </div>
+
+          <Card className="p-6">
+            <div className="rounded-[2rem] border border-slate-200/10 bg-slate-950 p-5 text-white shadow-xl shadow-slate-950/10">
+              <div className="flex items-center justify-between gap-2">
+                <div>
+                  <p className="text-sm text-slate-400">Exemple de voiture</p>
+                  <h2 className="mt-2 text-2xl font-bold text-white">{car ? `${car.make} ${car.model}` : 'Sélection de showroom'}</h2>
+                </div>
+                <div className="rounded-3xl bg-brand-50 px-3 py-2 text-xs font-semibold text-brand-900">QR</div>
+              </div>
+              <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-3xl bg-slate-900/80 p-4 text-sm">
+                  <p className="font-semibold text-slate-200">Ville</p>
+                  <p className="mt-2 text-slate-300">{car?.city || 'Tunis'}</p>
+                </div>
+                <div className="rounded-3xl bg-slate-900/80 p-4 text-sm">
+                  <p className="font-semibold text-slate-200">Prix</p>
+                  <p className="mt-2 text-slate-300">{car ? car.price.toLocaleString('fr-FR') + ' TND' : 'Lorem'}</p>
+                </div>
+              </div>
+              {car ? (
+                <div className="mt-6">
+                  <QRCodeBlock value={generateQrUrl(car.id)} label={car.make + ' ' + car.model} />
+                </div>
+              ) : null}
+            </div>
+          </Card>
+        </div>
       </section>
     </div>
   );
@@ -272,7 +389,7 @@ export function CarListPage() {
           </label>
           <label className="grid gap-2 text-sm">
             <span className="font-semibold text-slate-700">Ville</span>
-            <input className="rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-brand-300" value={filters.city} onChange={(event) => setFilters((current) => ({ ...current, city: event.target.value }))} placeholder="Casablanca" />
+            <input className="rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:border-brand-300" value={filters.city} onChange={(event) => setFilters((current) => ({ ...current, city: event.target.value }))} placeholder="Tunis" />
           </label>
         </div>
       </Card>
@@ -308,12 +425,16 @@ export function CarDetailPage() {
   const [name, setName] = useState('Client démo');
   const car = cars.find((entry) => entry.id === id);
   const estimate = car ? estimateMarketPrice(car) : 0;
+  const viewIncrementedRef = useRef(false);
 
   useEffect(() => {
-    if (car) {
-      incrementView(car.id);
+    if (!car || viewIncrementedRef.current) {
+      return;
     }
-  }, [car, incrementView]);
+
+    incrementView(id);
+    viewIncrementedRef.current = true;
+  }, [car, id, incrementView]);
 
   if (!car) {
     return <EmptyState title="Voiture introuvable" description="Le lien peut être obsolète ou le véhicule supprimé." actionLabel="Retour au catalogue" onAction={() => navigate('/cars')} />;
@@ -453,6 +574,7 @@ function AuthField({ label, type = 'text', value, onChange, placeholder }) {
 export function LoginPage() {
   const navigate = useNavigate();
   const { login: authLogin } = useAuth();
+  const { t, language } = useLanguage();
   const [email, setEmail] = useState('client@scandrive.com');
   const [password, setPassword] = useState('client123');
   const [error, setError] = useState('');
@@ -473,8 +595,8 @@ export function LoginPage() {
   return (
     <div className="mx-auto grid max-w-4xl gap-6 lg:grid-cols-[0.9fr_1.1fr]">
       <Card className="bg-[linear-gradient(180deg,_rgba(16,43,79,1),_rgba(23,63,121,0.95))] text-white">
-        <p className="text-sm font-semibold tracking-[0.22em] text-slate-200 uppercase">Connexion</p>
-        <h1 className="mt-3 text-3xl font-bold">Accédez aux espaces client, vendeur ou admin</h1>
+        <p className="text-sm font-semibold tracking-[0.22em] text-slate-200 uppercase">{t.navLogin}</p>
+        <h1 className="mt-3 text-3xl font-bold">{language === 'ar' ? 'الوصول إلى المساحات الخاصة' : 'Accédez aux espaces client, vendeur ou admin'}</h1>
         <ul className="mt-6 space-y-3 text-sm text-slate-200">
           <li className="flex gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 text-emerald-300" />Session simulée en localStorage</li>
           <li className="flex gap-2"><CheckCircle2 className="mt-0.5 h-4 w-4 text-emerald-300" />Rôles protégés via route guard</li>
@@ -483,14 +605,14 @@ export function LoginPage() {
       </Card>
 
       <Card>
-        <h2 className="text-2xl font-bold text-slate-950">Connexion démo</h2>
+        <h2 className="text-2xl font-bold text-slate-950">{t.navLogin}</h2>
         {error ? <div className="mt-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</div> : null}
         <form className="mt-5 grid gap-4" onSubmit={submit}>
           <AuthField label="Email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} />
           <AuthField label="Mot de passe" type="password" value={password} onChange={(event) => setPassword(event.target.value)} />
           <div className="flex flex-wrap gap-3">
-            <Button type="submit" className="gap-2">Se connecter</Button>
-            <Button type="button" variant="secondary" onClick={() => navigate('/register')}>Créer un compte</Button>
+            <Button type="submit" className="gap-2">{t.navLogin}</Button>
+            <Button type="button" variant="secondary" onClick={() => navigate('/register')}>{t.navRegister}</Button>
           </div>
         </form>
         <div className="mt-5 rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
@@ -504,6 +626,7 @@ export function LoginPage() {
 export function RegisterPage() {
   const navigate = useNavigate();
   const { register } = useAuth();
+  const { t, language } = useLanguage();
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'client' });
 
   const submit = (event) => {
@@ -515,8 +638,8 @@ export function RegisterPage() {
   return (
     <div className="mx-auto max-w-2xl">
       <Card>
-        <h1 className="text-3xl font-bold text-slate-950">Créer un compte</h1>
-        <p className="mt-2 text-sm text-slate-600">Le compte est simulé et reste disponible tant que le stockage local n’est pas vidé.</p>
+        <h1 className="text-3xl font-bold text-slate-950">{t.navRegister}</h1>
+        <p className="mt-2 text-sm text-slate-600">{language === 'ar' ? 'يتم حفظ الحساب بشكل محلي فقط.' : 'Le compte est simulé et reste disponible tant que le stockage local n’est pas vidé.'}</p>
         <form className="mt-6 grid gap-4" onSubmit={submit}>
           <AuthField label="Nom complet" value={form.name} onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))} />
           <AuthField label="Email" type="email" value={form.email} onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))} />
@@ -529,7 +652,7 @@ export function RegisterPage() {
               <option value="admin">Admin</option>
             </select>
           </label>
-          <Button type="submit">Créer le compte</Button>
+          <Button type="submit">{t.navRegister}</Button>
         </form>
       </Card>
     </div>
@@ -538,16 +661,17 @@ export function RegisterPage() {
 
 export function ContactPage() {
   const { agencies } = useAppData();
+  const { t, language } = useLanguage();
 
   return (
     <div className="space-y-6">
       <Card>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-sm font-semibold text-brand-700">Agences ScanDrive</p>
-            <h1 className="text-3xl font-bold text-slate-950">Carte des agences et contact direct</h1>
+            <p className="text-sm font-semibold text-brand-700">{t.navAgencies}</p>
+            <h1 className="text-3xl font-bold text-slate-950">{language === 'ar' ? 'الوكالات وخريطة الاتصال' : 'Carte des agences et contact direct'}</h1>
           </div>
-          <Badge tone="brand">Carte simulée sans API</Badge>
+          <Badge tone="brand">Tunisia</Badge>
         </div>
       </Card>
 
@@ -555,7 +679,7 @@ export function ContactPage() {
         <Card>
           <iframe
             title="Carte ScanDrive"
-            src="https://www.google.com/maps?q=Morocco&output=embed"
+            src="https://www.google.com/maps?q=Tunisia&output=embed"
             className="h-80 w-full rounded-3xl border-0"
             loading="lazy"
           />

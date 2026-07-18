@@ -8,6 +8,7 @@ import StatCard from '../../components/dashboard/StatCard';
 import QRCodeBlock from '../../components/car/QRCodeBlock';
 import { useAppData } from '../../context/AppDataContext';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { formatDate } from '../../utils/formatDate';
 import { generateQrUrl } from '../../utils/generateQrUrl';
 
@@ -29,6 +30,7 @@ export function VendeurDashboard() {
 
 export function MyCarsPage() {
   const { user } = useAuth();
+  const { t, language } = useLanguage();
   const { cars, addCar, updateCar, deleteCar } = useAppData();
   const [editingId, setEditingId] = useState('');
   const [form, setForm] = useState({ make: '', model: '', year: 2024, fuel: 'Essence', transmission: 'Auto', color: '', city: '', price: '', mileage: '', status: 'Disponible', featured: false, photos: ['https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=900&q=80'], sellerId: user?.id, agencyId: 'agency-1' });
@@ -71,8 +73,8 @@ export function MyCarsPage() {
   return (
     <div className="space-y-6">
       <Card>
-        <p className="text-sm font-semibold text-brand-700">CRUD simulé</p>
-        <h1 className="mt-2 text-2xl font-bold text-slate-950">Mes voitures</h1>
+        <p className="text-sm font-semibold text-brand-700">{t.actions}</p>
+        <h1 className="mt-2 text-2xl font-bold text-slate-950">{language === 'ar' ? 'سياراتي' : 'Mes voitures'}</h1>
         <form className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3" onSubmit={submit}>
           {['make', 'model', 'color', 'city'].map((field) => (
             <Field key={field} label={field} value={form[field]} onChange={(event) => setForm((current) => ({ ...current, [field]: event.target.value }))} />
@@ -84,8 +86,8 @@ export function MyCarsPage() {
           <Field label="Boîte" as="select" value={form.transmission} onChange={(event) => setForm((current) => ({ ...current, transmission: event.target.value }))} options={['Auto', 'Manuelle'].map((item) => ({ value: item, label: item }))} />
           <Field label="Statut" as="select" value={form.status} onChange={(event) => setForm((current) => ({ ...current, status: event.target.value }))} options={['Disponible', 'Réservée', 'Vendue'].map((item) => ({ value: item, label: item }))} />
           <div className="flex items-end gap-3">
-            <Button type="submit" className="gap-2"><PlusCircle className="h-4 w-4" />{editingCar ? 'Mettre à jour' : 'Ajouter'}</Button>
-            {editingCar ? <Button type="button" variant="secondary" onClick={reset}>Annuler</Button> : null}
+            <Button type="submit" className="gap-2"><PlusCircle className="h-4 w-4" />{editingCar ? t.save : (language === 'ar' ? 'إضافة' : 'Ajouter')}</Button>
+            {editingCar ? <Button type="button" variant="secondary" onClick={reset}>{t.cancel}</Button> : null}
           </div>
         </form>
       </Card>
@@ -105,8 +107,8 @@ export function MyCarsPage() {
               <QRCodeBlock value={car.qrCodeUrl || generateQrUrl(car.id)} label="QR véhicule" />
             </div>
             <div className="mt-4 flex flex-wrap gap-3">
-              <Button variant="secondary" className="gap-2" onClick={() => setEditingId(car.id)}><PencilLine className="h-4 w-4" />Modifier</Button>
-              <Button variant="danger" className="gap-2" onClick={() => deleteCar(car.id)}><Trash2 className="h-4 w-4" />Supprimer</Button>
+              <Button variant="secondary" className="gap-2" onClick={() => setEditingId(car.id)}><PencilLine className="h-4 w-4" />{t.edit}</Button>
+              <Button variant="danger" className="gap-2" onClick={() => deleteCar(car.id)}><Trash2 className="h-4 w-4" />{t.delete}</Button>
             </div>
           </Card>
         )) : <EmptyState title="Aucune voiture" description="Ajoutez votre première voiture depuis le formulaire ci-dessus." />}
@@ -117,6 +119,7 @@ export function MyCarsPage() {
 
 export function VendeurRdvPage() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const { rendezvous, updateAppointment, cars } = useAppData();
   const list = rendezvous.filter((rdv) => rdv.sellerId === user?.id);
 
@@ -134,8 +137,8 @@ export function VendeurRdvPage() {
               <Badge tone={rdv.status === 'Confirmé' ? 'success' : 'accent'}>{rdv.status}</Badge>
             </div>
             <div className="mt-4 flex flex-wrap gap-3">
-              <Button className="gap-2" onClick={() => updateAppointment({ ...rdv, status: 'Confirmé' })}><CircleCheckBig className="h-4 w-4" />Confirmer</Button>
-              <Button variant="secondary" className="gap-2" onClick={() => updateAppointment({ ...rdv, status: 'Annulé' })}><CircleX className="h-4 w-4" />Annuler</Button>
+              <Button className="gap-2" onClick={() => updateAppointment({ ...rdv, status: 'Confirmé' })}><CircleCheckBig className="h-4 w-4" />{t.confirm}</Button>
+              <Button variant="secondary" className="gap-2" onClick={() => updateAppointment({ ...rdv, status: 'Annulé' })}><CircleX className="h-4 w-4" />{t.cancel}</Button>
             </div>
           </Card>
         );
@@ -146,6 +149,7 @@ export function VendeurRdvPage() {
 
 export function VendeurMessagesPage() {
   const { user } = useAuth();
+  const { t, language } = useLanguage();
   const { messages, users, sendMessage, markThreadRead } = useAppData();
   const [reply, setReply] = useState('');
   const threads = useMemo(() => messages.filter((message) => message.from === user?.id || message.to === user?.id), [messages, user?.id]);
@@ -170,7 +174,7 @@ export function VendeurMessagesPage() {
   return (
     <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
       <Card>
-        <p className="text-sm font-semibold text-brand-700">Threads</p>
+        <p className="text-sm font-semibold text-brand-700">{t.messagesTitle}</p>
         <div className="mt-4 space-y-3">
           {threads.length ? threads.map((message) => {
             const partner = users.find((entry) => entry.id === (message.from === user?.id ? message.to : message.from));
@@ -185,10 +189,10 @@ export function VendeurMessagesPage() {
       </Card>
 
       <Card>
-        <p className="text-sm font-semibold text-brand-700">Réponse rapide</p>
+        <p className="text-sm font-semibold text-brand-700">{t.replyTitle}</p>
         <form className="mt-4 grid gap-3" onSubmit={submit}>
-          <textarea value={reply} onChange={(event) => setReply(event.target.value)} className="min-h-40 rounded-3xl border border-slate-200 px-4 py-3 outline-none focus:border-brand-300" placeholder="Répondre au client..." />
-          <Button type="submit" className="gap-2"><MessageSquareMore className="h-4 w-4" />Envoyer</Button>
+          <textarea value={reply} onChange={(event) => setReply(event.target.value)} className="min-h-40 rounded-3xl border border-slate-200 px-4 py-3 outline-none focus:border-brand-300" placeholder={language === 'ar' ? 'الرد على العميل...' : 'Répondre au client...'} />
+          <Button type="submit" className="gap-2"><MessageSquareMore className="h-4 w-4" />{language === 'ar' ? 'إرسال' : 'Envoyer'}</Button>
         </form>
       </Card>
     </div>

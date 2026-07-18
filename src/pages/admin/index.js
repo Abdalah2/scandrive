@@ -8,11 +8,13 @@ import EmptyState from '../../components/common/EmptyState';
 import StatCard from '../../components/dashboard/StatCard';
 import QRCodeBlock from '../../components/car/QRCodeBlock';
 import { useAppData } from '../../context/AppDataContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { formatPrice } from '../../utils/formatPrice';
 import { generateQrUrl } from '../../utils/generateQrUrl';
 
 export function AdminDashboard() {
   const { cars, users, activities } = useAppData();
+  const { t } = useLanguage();
   const available = cars.filter((car) => car.status === 'Disponible').length;
   const clients = users.filter((user) => user.role === 'client').length;
   const ca = cars.reduce((sum, car) => sum + car.price, 0);
@@ -29,7 +31,7 @@ export function AdminDashboard() {
       <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
         <Card>
           <p className="text-sm font-semibold text-brand-700">Vue globale</p>
-          <h2 className="mt-2 text-2xl font-bold text-slate-950">Activité des voitures et rendez-vous</h2>
+          <h2 className="mt-2 text-2xl font-bold text-slate-950">{t.adminStatsTitle}</h2>
           <div className="mt-5 h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={cars.slice(0, 8)}>
@@ -60,6 +62,7 @@ export function AdminDashboard() {
 }
 
 export function ManageCarsPage() {
+  const { t, language } = useLanguage();
   const { cars, addCar, updateCar, deleteCar } = useAppData();
   const [editingId, setEditingId] = useState('');
   const [form, setForm] = useState({ make: '', model: '', year: 2024, fuel: 'Essence', transmission: 'Auto', color: '', city: '', price: '', mileage: '', status: 'Disponible', featured: true, sellerId: 'user-202', agencyId: 'agency-1', photos: ['https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=900&q=80'] });
@@ -84,7 +87,7 @@ export function ManageCarsPage() {
   return (
     <div className="space-y-6">
       <Card>
-        <h1 className="text-2xl font-bold text-slate-950">Gestion voitures</h1>
+        <h1 className="text-2xl font-bold text-slate-950">{t.adminCarsTitle}</h1>
         <form className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3" onSubmit={submit}>
           {['make', 'model', 'color', 'city'].map((field) => (
             <Field key={field} label={field} value={form[field]} onChange={(event) => setForm((current) => ({ ...current, [field]: event.target.value }))} />
@@ -96,8 +99,8 @@ export function ManageCarsPage() {
           <Field label="Boîte" as="select" value={form.transmission} onChange={(event) => setForm((current) => ({ ...current, transmission: event.target.value }))} options={['Auto', 'Manuelle'].map((item) => ({ value: item, label: item }))} />
           <Field label="Statut" as="select" value={form.status} onChange={(event) => setForm((current) => ({ ...current, status: event.target.value }))} options={['Disponible', 'Réservée', 'Vendue'].map((item) => ({ value: item, label: item }))} />
           <div className="flex items-end gap-3">
-            <Button type="submit" className="gap-2"><PlusCircle className="h-4 w-4" />{editingCar ? 'Mettre à jour' : 'Créer'}</Button>
-            {editingCar ? <Button type="button" variant="secondary" onClick={reset}>Annuler</Button> : null}
+            <Button type="submit" className="gap-2"><PlusCircle className="h-4 w-4" />{editingCar ? t.save : (language === 'ar' ? 'إنشاء' : 'Créer')}</Button>
+            {editingCar ? <Button type="button" variant="secondary" onClick={reset}>{t.cancel}</Button> : null}
           </div>
         </form>
       </Card>
@@ -117,8 +120,8 @@ export function ManageCarsPage() {
               <QRCodeBlock value={car.qrCodeUrl || generateQrUrl(car.id)} label="QR auto-généré" />
             </div>
             <div className="mt-4 flex flex-wrap gap-3">
-              <Button variant="secondary" className="gap-2" onClick={() => { setEditingId(car.id); setForm({ ...car, price: car.price, mileage: car.mileage, year: car.year }); }}><PencilLine className="h-4 w-4" />Éditer</Button>
-              <Button variant="danger" className="gap-2" onClick={() => deleteCar(car.id)}><Trash2 className="h-4 w-4" />Supprimer</Button>
+              <Button variant="secondary" className="gap-2" onClick={() => { setEditingId(car.id); setForm({ ...car, price: car.price, mileage: car.mileage, year: car.year }); }}><PencilLine className="h-4 w-4" />{t.edit}</Button>
+              <Button variant="danger" className="gap-2" onClick={() => deleteCar(car.id)}><Trash2 className="h-4 w-4" />{t.delete}</Button>
             </div>
           </Card>
         ))}
@@ -129,6 +132,7 @@ export function ManageCarsPage() {
 
 export function ManageUsersPage() {
   const { users, updateUser } = useAppData();
+  const { language } = useLanguage();
 
   return (
     <div className="grid gap-4 xl:grid-cols-2">
@@ -142,7 +146,7 @@ export function ManageUsersPage() {
             <Badge tone={user.role === 'admin' ? 'brand' : user.role === 'vendeur' ? 'accent' : 'success'}>{user.role}</Badge>
           </div>
           <div className="mt-4 flex items-center gap-3">
-            <Button variant="secondary" onClick={() => updateUser({ ...user, active: !user.active })}>{user.active ? 'Désactiver' : 'Activer'}</Button>
+            <Button variant="secondary" onClick={() => updateUser({ ...user, active: !user.active })}>{user.active ? (language === 'ar' ? 'تعطيل' : 'Désactiver') : (language === 'ar' ? 'تفعيل' : 'Activer')}</Button>
           </div>
         </Card>
       ))}
@@ -151,6 +155,7 @@ export function ManageUsersPage() {
 }
 
 export function ManageAgencesPage() {
+  const { t, language } = useLanguage();
   const { agencies, addAgency, updateAgency, deleteAgency } = useAppData();
   const [editingId, setEditingId] = useState('');
   const [form, setForm] = useState({ name: '', city: '', address: '', phone: '', hours: '' });
@@ -170,14 +175,14 @@ export function ManageAgencesPage() {
   return (
     <div className="space-y-6">
       <Card>
-        <h1 className="text-2xl font-bold text-slate-950">Gestion agences</h1>
+        <h1 className="text-2xl font-bold text-slate-950">{t.adminAgenciesTitle}</h1>
         <form className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3" onSubmit={submit}>
           {['name', 'city', 'address', 'phone', 'hours'].map((field) => (
             <Field key={field} label={field} value={form[field]} onChange={(event) => setForm((current) => ({ ...current, [field]: event.target.value }))} />
           ))}
           <div className="flex items-end gap-3">
-            <Button type="submit">{editingAgency ? 'Mettre à jour' : 'Créer'}</Button>
-            {editingAgency ? <Button type="button" variant="secondary" onClick={() => { setEditingId(''); setForm({ name: '', city: '', address: '', phone: '', hours: '' }); }}>Annuler</Button> : null}
+            <Button type="submit">{editingAgency ? t.save : (language === 'ar' ? 'إنشاء' : 'Créer')}</Button>
+            {editingAgency ? <Button type="button" variant="secondary" onClick={() => { setEditingId(''); setForm({ name: '', city: '', address: '', phone: '', hours: '' }); }}>{t.cancel}</Button> : null}
           </div>
         </form>
       </Card>
@@ -193,8 +198,8 @@ export function ManageAgencesPage() {
               <Badge tone="brand">{agency.city}</Badge>
             </div>
             <div className="mt-4 flex flex-wrap gap-3">
-              <Button variant="secondary" onClick={() => { setEditingId(agency.id); setForm({ ...agency }); }}>Éditer</Button>
-              <Button variant="danger" onClick={() => deleteAgency(agency.id)}>Supprimer</Button>
+              <Button variant="secondary" onClick={() => { setEditingId(agency.id); setForm({ ...agency }); }}>{t.edit}</Button>
+              <Button variant="danger" onClick={() => deleteAgency(agency.id)}>{t.delete}</Button>
             </div>
           </Card>
         ))}
@@ -244,6 +249,7 @@ export function StatsPage() {
 
 export function QRGeneratorPage() {
   const { cars } = useAppData();
+  const { t } = useLanguage();
   const [selectedIds, setSelectedIds] = useState(cars.slice(0, 4).map((car) => car.id));
   const selectedCars = cars.filter((car) => selectedIds.includes(car.id));
 
@@ -251,7 +257,7 @@ export function QRGeneratorPage() {
     <div className="space-y-6">
       <Card>
         <p className="text-sm font-semibold text-brand-700">Batch QR</p>
-        <h1 className="mt-2 text-2xl font-bold text-slate-950">Générateur QR Code</h1>
+        <h1 className="mt-2 text-2xl font-bold text-slate-950">{t.adminQrTitle}</h1>
         <p className="mt-2 text-sm text-slate-600">Sélectionnez des voitures pour visualiser et télécharger les QR codes de lot.</p>
       </Card>
 
