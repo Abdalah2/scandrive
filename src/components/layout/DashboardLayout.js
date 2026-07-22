@@ -102,9 +102,8 @@ export default function DashboardLayout() {
                   <option value="ar">AR</option>
                   <option value="en">EN</option>
                 </select>
-                <Button variant="secondary" className="gap-2" onClick={toggleTheme} type="button">
-                  {isDark ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}
-                  {isDark ? t.themeLight : t.themeDark}
+                <Button variant="secondary" className="p-2" onClick={toggleTheme} type="button" aria-label={isDark ? t.themeLight : t.themeDark}>
+                  {isDark ? <SunMedium className="h-5 w-5" /> : <MoonStar className="h-5 w-5" />}
                 </Button>
                 <div className="rounded-2xl bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-800 dark:bg-brand-900/30 dark:text-brand-50">{t.modeDemo}</div>
               </div>

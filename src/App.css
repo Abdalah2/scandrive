@@ -1,4 +1,5 @@
-/* App shell styles live in src/index.css and Tailwind utilities. */.App {
+/* App shell styles live in src/index.css and Tailwind utilities. */
+.App {
   text-align: center;
 }
 
@@ -34,5 +35,168 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* ===== HERO UNIFIED SECTION ===== */
+.hero-unified {
+  position: relative;
+  background-attachment: fixed;
+}
+
+.hero-unified::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(15, 23, 42, 0.02) 0%, transparent 100%);
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* Smooth slide-in animations for content */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.hero-unified > div > div:nth-child(1) {
+  animation: slideInLeft 0.6s ease-out;
+}
+
+.hero-unified > div > div:nth-child(2) {
+  animation: slideInLeft 0.6s ease-out 0.1s backwards;
+}
+
+.hero-unified > div > div:nth-child(3) {
+  animation: slideInLeft 0.6s ease-out 0.2s backwards;
+}
+
+.hero-unified > div > div:nth-child(4) {
+  animation: slideInLeft 0.6s ease-out 0.3s backwards;
+}
+
+.hero-unified > div > div:nth-child(5) {
+  animation: slideInLeft 0.6s ease-out 0.4s backwards;
+}
+
+.hero-unified > div > div:nth-child(6) {
+  animation: slideInLeft 0.6s ease-out 0.5s backwards;
+}
+
+/* Stat cards entrance animation */
+@keyframes statPopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.stat-item {
+  animation: statPopIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  opacity: 0;
+}
+
+/* Floating background elements */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-30px);
+  }
+}
+
+.hero-unified > div:nth-child(2) {
+  animation: float 10s ease-in-out infinite;
+}
+
+.hero-unified > div:nth-child(3) {
+  animation: float 12s ease-in-out infinite 1s;
+}
+
+/* Search input focus effect */
+.hero-unified input:focus {
+  box-shadow: 0 0 30px rgba(37, 125, 240, 0.3) inset;
+}
+
+/* Button shine effect */
+@keyframes buttonShine {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.hero-unified button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-unified button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  animation: buttonShine 0.6s ease-in-out;
+}
+
+.hero-unified button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+.hero-unified button:active {
+  transform: translateY(-1px);
+}
+
+/* Badge pulse effect */
+@keyframes badgePulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(37, 125, 240, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(37, 125, 240, 0);
+  }
+}
+
+.hero-unified .badge {
+  animation: badgePulse 3s infinite;
+}
+
+/* Stat cards hover effect */
+.stat-item {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .hero-unified {
+    min-height: 500px;
+  }
+
+  .hero-unified h1 {
+    font-size: 2.5rem !important;
   }
 }

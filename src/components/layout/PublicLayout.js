@@ -69,9 +69,8 @@ export default function PublicLayout() {
               <option value="ar">AR</option>
               <option value="en">EN</option>
             </select>
-            <Button variant="secondary" className="hidden gap-2 lg:inline-flex" onClick={toggleTheme} type="button" aria-label={isDark ? t.themeLight : t.themeDark}>
-              {isDark ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}
-              {isDark ? t.themeLight : t.themeDark}
+            <Button variant="secondary" className="hidden lg:inline-flex p-2" onClick={toggleTheme} type="button" aria-label={isDark ? t.themeLight : t.themeDark}>
+              {isDark ? <SunMedium className="h-5 w-5" /> : <MoonStar className="h-5 w-5" />}
             </Button>
             <button className="rounded-2xl p-2 text-brand-700 hover:bg-slate-100 dark:text-brand-200 dark:hover:bg-slate-800 lg:hidden" aria-label="menu">
               <MessageCircleMore className="h-5 w-5" />

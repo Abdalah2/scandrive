@@ -54,107 +54,108 @@ export function LandingPage() {
   ];
   const [search, setSearch] = useState(language === 'ar' ? 'SUV هجينة في تونس' : language === 'en' ? 'Hybrid SUV in Tunis' : 'SUV hybride à Tunis');
 
+  // Get random featured car for background
+  const randomCar = featured.length > 0 ? featured[Math.floor(Math.random() * featured.length)] : null;
+  const bgImage = randomCar?.photos?.[0] || 'https://images.unsplash.com/photo-1552820728-8ac41f1ce891?w=1600&h=700&fit=crop';
+
   return (
     <div className="space-y-8">
-      <section className="overflow-hidden rounded-[2rem] bg-[radial-gradient(circle_at_top_right,_rgba(255,159,28,0.22),_transparent_35%),linear-gradient(135deg,_#102b4f_0%,_#173f79_48%,_#0f172a_100%)] text-white shadow-soft dark:border dark:border-slate-800 dark:bg-[radial-gradient(circle_at_top_right,_rgba(37,125,240,0.18),_transparent_35%),linear-gradient(135deg,_#08111f_0%,_#10253f_52%,_#050b14_100%)]">
-        <div className="grid gap-10 px-6 py-10 lg:grid-cols-[1.1fr_0.9fr] lg:px-10 lg:py-14">
-          <div className="space-y-6">
-            <Badge tone="accent" className="bg-white/10 text-white">{t.heroBadge}</Badge>
-            <div className="space-y-4">
-              <div className="flex flex-wrap items-center gap-3">
-                <BrandMark />
-                <div className="space-y-2">
-                  <p className="text-xs uppercase tracking-[0.35em] text-white/70">ScanDrive</p>
-                  <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs text-white/80 shadow-sm">
-                    {t.heroLocation}
-                  </span>
-                </div>
-              </div>
-              <h1 className="max-w-2xl text-4xl font-bold leading-tight sm:text-5xl">
+      {/* UNIFIED HERO SECTION - ONE POWERFUL BOX */}
+      <section className="hero-unified relative min-h-[550px] lg:min-h-[650px] overflow-hidden rounded-[3rem] shadow-2xl">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url('${bgImage}')`,
+            backgroundPosition: 'center right',
+          }}
+        />
+
+        {/* Gradient Overlay - Left to right */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/85 to-slate-900/30" />
+
+        {/* Accent Elements */}
+        <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl" />
+        <div className="absolute -top-32 -left-32 w-80 h-80 bg-orange-500/5 rounded-full blur-3xl" />
+
+        {/* Content - Left Aligned */}
+        <div className="relative z-10 h-full flex flex-col justify-center px-6 sm:px-10 lg:px-16 py-12 lg:py-20">
+          <div className="max-w-2xl space-y-8">
+            {/* Small Badge */}
+            <div className="inline-flex items-center gap-2">
+              <Badge tone="accent" className="bg-brand-500/25 text-brand-100 border border-brand-400/40 backdrop-blur-sm">
+                {t.heroBadge}
+              </Badge>
+            </div>
+
+            {/* Main Heading - Bold & Clear */}
+            <div className="space-y-3">
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tight">
                 {t.heroTitle}
               </h1>
-              <p className="max-w-xl text-base text-slate-200 sm:text-lg">
+              <p className="text-lg sm:text-xl text-slate-200 font-light leading-relaxed max-w-lg">
                 {t.heroText}
               </p>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
-              <div className="rounded-3xl border border-white/10 bg-white/10 p-3 backdrop-blur">
-                <label className="sr-only" htmlFor="smart-search">{t.searchLabel}</label>
-                <input id="smart-search" value={search} onChange={(event) => setSearch(event.target.value)} className="w-full bg-transparent px-2 py-3 text-sm text-white outline-none placeholder:text-slate-300" placeholder={t.searchPlaceholder} />
+            {/* Search Bar - Enhanced */}
+            <div className="pt-2">
+              <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center max-w-lg">
+                <div className="flex-1 rounded-full border border-white/30 bg-white/12 backdrop-blur-xl p-1 focus-within:bg-white/18 focus-within:border-brand-400/60 transition-all">
+                  <label className="sr-only" htmlFor="smart-search">{t.searchLabel}</label>
+                  <input 
+                    id="smart-search" 
+                    value={search} 
+                    onChange={(event) => setSearch(event.target.value)} 
+                    className="w-full bg-transparent px-5 py-4 text-white outline-none placeholder:text-slate-400 font-medium"
+                    placeholder={t.searchPlaceholder}
+                  />
+                </div>
+                <Button 
+                  variant="accent" 
+                  className="gap-2 px-8 py-4 font-bold shadow-xl whitespace-nowrap"
+                  onClick={() => navigate(`/cars?q=${encodeURIComponent(search)}`)}
+                >
+                  <ScanSearch className="h-5 w-5" />
+                  {language === 'ar' ? 'بحث' : language === 'en' ? 'Search' : 'Chercher'}
+                </Button>
               </div>
-              <Button variant="accent" className="gap-2 px-6" onClick={() => navigate(`/cars?q=${encodeURIComponent(search)}`)}>
-                <ScanSearch className="h-4 w-4" />
-                {language === 'ar' ? 'بحث' : language === 'en' ? 'Search' : 'Recherche'}
-              </Button>
             </div>
 
-            <div className="flex flex-wrap gap-3">
-              <Button variant="secondary" onClick={() => navigate('/register')} className="gap-2">
-                <Sparkles className="h-4 w-4" />
+            {/* CTA Buttons - Simplified */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <Button 
+                variant="accent"
+                onClick={() => navigate('/register')} 
+                className="gap-2 px-8 py-4 font-bold text-base shadow-lg"
+              >
+                <Sparkles className="h-5 w-5" />
                 {t.ctaStart}
               </Button>
-              <Button variant="ghost" onClick={() => navigate('/cars')} className="border border-white/20 text-white hover:bg-white/10">
+              <Button 
+                variant="ghost"
+                onClick={() => navigate('/cars')} 
+                className="border-2 border-white/40 text-white hover:border-white/70 hover:bg-white/10 px-8 py-4 font-bold transition-all gap-2"
+              >
                 {t.ctaCatalogue}
+                <ArrowRight className="h-5 w-5" />
               </Button>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-3">
-              {stats.map((stat) => (
-                <Card key={stat.label} className="border-white/10 bg-white/10 p-4 text-white backdrop-blur">
-                  <p className="text-2xl font-bold">{stat.value}</p>
-                  <p className="text-sm text-slate-200">{stat.label}</p>
-                </Card>
+            {/* Stats - Minimal Display */}
+            <div className="grid grid-cols-3 gap-3 pt-6 max-w-sm">
+              {stats.map((stat, idx) => (
+                <div 
+                  key={stat.label}
+                  className="stat-item rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-3 hover:bg-white/15 transition-all"
+                  style={{ animationDelay: `${idx * 80}ms` }}
+                >
+                  <p className="text-2xl font-black text-white">{stat.value}</p>
+                  <p className="text-xs text-slate-300 mt-1 font-semibold uppercase">{stat.label}</p>
+                </div>
               ))}
             </div>
           </div>
-
-          <Card className="bg-white p-5">
-            <div className="flex flex-col gap-6 rounded-[2rem] bg-slate-950/95 p-6 text-white shadow-xl shadow-slate-900/10 sm:p-8">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.32em] text-brand-300">QR showroom</p>
-                  <h2 className="mt-3 text-3xl font-bold">{t.scanSectionTitle}</h2>
-                </div>
-                <div className="rounded-3xl bg-brand-50 px-4 py-3 text-sm font-semibold text-brand-900">{t.trustedAgencies}</div>
-              </div>
-              <p className="max-w-xl text-sm leading-7 text-slate-300">{t.scanSectionSubtitle}</p>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <Button variant="accent" className="gap-2 px-6 py-4 text-base font-semibold" onClick={() => navigate('/showroom')}>
-                  <ScanSearch className="h-5 w-5" />
-                  {t.scanNow}
-                </Button>
-                <Button variant="secondary" className="gap-2 px-6 py-4 text-base font-semibold" onClick={() => navigate('/cars')}>
-                  <Sparkles className="h-5 w-5" />
-                  {t.exploreCatalog}
-                </Button>
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-[1.2fr_0.8fr]">
-                <div className="rounded-3xl bg-white/10 p-5">
-                  <p className="text-xl font-semibold text-white">{t.showroomFlowTitle}</p>
-                  <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-300">
-                    <li>{t.showroomFlowStep1}</li>
-                    <li>{t.showroomFlowStep2}</li>
-                    <li>{t.showroomFlowStep3}</li>
-                  </ul>
-                </div>
-                <div className="rounded-[2rem] border border-white/10 bg-white/5 p-5 text-center">
-                  <div className="mx-auto mb-4 inline-flex h-28 w-28 items-center justify-center rounded-full bg-white/10 text-brand-200">
-                    <ScanSearch className="h-12 w-12" />
-                  </div>
-                  <p className="text-sm text-slate-300">{t.showroomFlowCaption}</p>
-                </div>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-3">
-                {stats.map((stat) => (
-                  <div key={stat.label} className="rounded-3xl bg-white/10 p-4">
-                    <p className="text-3xl font-bold text-white">{stat.value}</p>
-                    <p className="text-sm text-slate-300">{stat.label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Card>
         </div>
       </section>
 
