@@ -1,6 +1,7 @@
 import { Home, CarFront, BadgeInfo, LayoutDashboard, Heart, GitCompareArrows, CalendarDays, MessagesSquare, Users, Building2, BarChart3, QrCode, LogOut, Search, SunMedium, MoonStar } from 'lucide-react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import Button from '../common/Button';
+import Footer from './Footer';
 import { useAuth } from '../../context/AuthContext';
 import ChatbotWidget from '../common/ChatbotWidget';
 import BrandMark from '../common/BrandMark';
@@ -126,6 +127,8 @@ export default function DashboardLayout() {
         <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <Outlet />
         </main>
+
+        <Footer />
       </div>
 
       <ChatbotWidget />

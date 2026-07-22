@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet } from 'react-router-dom';
 import ChatbotWidget from '../common/ChatbotWidget';
 import BrandMark from '../common/BrandMark';
 import Button from '../common/Button';
+import Footer from './Footer';
 import { useAuth } from '../../context/AuthContext';
 import { useThemeMode } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -83,11 +84,7 @@ export default function PublicLayout() {
         <Outlet />
       </main>
 
-      <footer className="border-t border-slate-200 bg-white/80 dark:border-slate-800 dark:bg-slate-950/80">
-        <div className="mx-auto max-w-7xl px-4 py-6 text-sm text-slate-500 dark:text-slate-400 sm:px-6 lg:px-8">
-          ScanDrive demo frontend only. Data, auth, and QR flows are fully simulated locally.
-        </div>
-      </footer>
+      <Footer />
 
       <ChatbotWidget />
     </div>
