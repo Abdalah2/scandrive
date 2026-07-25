@@ -19,7 +19,6 @@ import { useLanguage } from '../../context/LanguageContext';
 import { formatPrice } from '../../utils/formatPrice';
 import { generateQrUrl } from '../../utils/generateQrUrl';
 import { paginate, useMockApi } from '../../hooks/useMockApi';
-import BrandMark from '../../components/common/BrandMark';
 
 function estimateMarketPrice(car) {
   const agePenalty = Math.max(0.55, 1 - ((2026 - car.year) * 0.045));
