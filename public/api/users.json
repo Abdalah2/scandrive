@@ -1,0 +1,10 @@
+[
+  { "id": "user-001", "name": "Samira Benali", "email": "client@scandrive.com", "password": "client123", "role": "client", "active": true },
+  { "id": "user-002", "name": "Youssef El Idrissi", "email": "vendeur1@scandrive.com", "password": "vendeur123", "role": "vendeur", "active": true },
+  { "id": "user-003", "name": "Nadia Ait Ali", "email": "vendeur2@scandrive.com", "password": "vendeur123", "role": "vendeur", "active": true },
+  { "id": "user-004", "name": "Admin ScanDrive", "email": "admin@scandrive.com", "password": "admin123", "role": "admin", "active": true },
+  { "id": "user-201", "name": "Karim Vendeur", "email": "karim@scandrive.com", "password": "vendeur123", "role": "vendeur", "active": true },
+  { "id": "user-202", "name": "Aya Vendeuse", "email": "aya@scandrive.com", "password": "vendeur123", "role": "vendeur", "active": true },
+  { "id": "user-203", "name": "Omar Vendeur", "email": "omar@scandrive.com", "password": "vendeur123", "role": "vendeur", "active": true },
+  { "id": "user-301", "name": "Meryem Client", "email": "meryem@scandrive.com", "password": "client123", "role": "client", "active": true }
+]

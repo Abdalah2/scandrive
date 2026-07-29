@@ -1,0 +1,5 @@
+[
+  { "id": "msg-1", "threadId": "thread-user-001-user-202", "from": "user-001", "to": "user-202", "carId": "car-002", "text": "Bonjour, la BMW est-elle toujours disponible ?", "createdAt": "2026-07-13T10:30:00Z", "read": true },
+  { "id": "msg-2", "threadId": "thread-user-001-user-202", "from": "user-202", "to": "user-001", "carId": "car-002", "text": "Oui, elle est visible en agence Tunis Centre. Souhaitez-vous un RDV ?", "createdAt": "2026-07-13T11:05:00Z", "read": true },
+  { "id": "msg-3", "threadId": "thread-user-301-user-203", "from": "user-301", "to": "user-203", "carId": "car-005", "text": "Pouvez-vous confirmer le kilométrage du Tucson ?", "createdAt": "2026-07-14T09:10:00Z", "read": false }
+]

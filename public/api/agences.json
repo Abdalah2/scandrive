@@ -1,0 +1,6 @@
+[
+  { "id": "agency-1", "name": "ScanDrive Tunis Centre", "city": "Tunis", "address": "Avenue Habib Bourguiba, Tunis", "phone": "+216 71 00 11 22", "hours": "08:30 - 19:00" },
+  { "id": "agency-2", "name": "ScanDrive Sfax El Jadida", "city": "Sfax", "address": "Route de la Soukra, Sfax", "phone": "+216 74 00 22 33", "hours": "09:00 - 19:30" },
+  { "id": "agency-3", "name": "ScanDrive Sousse Kantaoui", "city": "Sousse", "address": "Boulevard du 14 Janvier, Sousse", "phone": "+216 73 00 44 55", "hours": "09:00 - 18:30" },
+  { "id": "agency-4", "name": "ScanDrive Nabeul Marina", "city": "Nabeul", "address": "Corniche de Nabeul, Nabeul", "phone": "+216 72 00 66 77", "hours": "08:00 - 18:00" }
+]

@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useMemo, useReducer } from 'react';
+import { createContext, useContext, useEffect, useMemo, useReducer, useState } from 'react';
+import { getStaticDatabase } from '../services/staticApi';
 import carsSeed from '../data/cars.json';
 import usersSeed from '../data/users.json';
 import agenciesSeed from '../data/agences.json';
@@ -7,6 +8,38 @@ import messagesSeed from '../data/messages.json';
 
 const STORAGE_KEY = 'scandrive-app-data';
 const AppDataContext = createContext(null);
+
+const defaultAppDataState = {
+  cars: carsSeed,
+  users: usersSeed,
+  agencies: agenciesSeed,
+  rendezvous: rendezvousSeed,
+  messages: messagesSeed,
+  activities: [],
+};
+
+function getInitialState() {
+  const raw = window.localStorage.getItem(STORAGE_KEY);
+
+  if (!raw) {
+    return defaultAppDataState;
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+
+    return {
+      cars: parsed.cars?.length ? parsed.cars : carsSeed,
+      users: parsed.users?.length ? parsed.users : usersSeed,
+      agencies: parsed.agencies?.length ? parsed.agencies : agenciesSeed,
+      rendezvous: parsed.rendezvous?.length ? parsed.rendezvous : rendezvousSeed,
+      messages: parsed.messages?.length ? parsed.messages : messagesSeed,
+      activities: parsed.activities?.length ? parsed.activities : [],
+    };
+  } catch (error) {
+    return defaultAppDataState;
+  }
+}
 
 function createThreadId(a, b) {
   return [a, b].sort().join('-');
@@ -53,6 +86,8 @@ function reducer(state, action) {
       return { ...state, users: state.users.map((user) => (user.id === action.item.id ? action.item : user)) };
     case 'seedActivity':
       return { ...state, activities: [action.item, ...state.activities].slice(0, 30) };
+    case 'hydrate':
+      return action.state;
     default:
       return state;
   }
@@ -62,14 +97,7 @@ function loadState() {
   const raw = window.localStorage.getItem(STORAGE_KEY);
 
   if (!raw) {
-    return {
-      cars: carsSeed,
-      users: usersSeed,
-      agencies: agenciesSeed,
-      rendezvous: rendezvousSeed,
-      messages: messagesSeed,
-      activities: [],
-    };
+    return defaultAppDataState;
   }
 
   try {
@@ -84,19 +112,51 @@ function loadState() {
       activities: parsed.activities?.length ? parsed.activities : [],
     };
   } catch (error) {
-    return {
-      cars: carsSeed,
-      users: usersSeed,
-      agencies: agenciesSeed,
-      rendezvous: rendezvousSeed,
-      messages: messagesSeed,
-      activities: [],
-    };
+    return defaultAppDataState;
   }
 }
 
 export function AppDataProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, undefined, loadState);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    if (loaded) {
+      return undefined;
+    }
+
+    let active = true;
+
+    async function loadDatabase() {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+
+      if (raw) {
+        setLoaded(true);
+        return;
+      }
+
+      try {
+        const database = await getStaticDatabase();
+        if (!active) {
+          return;
+        }
+
+        dispatch({ type: 'hydrate', state: { ...database, activities: [] } });
+      } catch (error) {
+        console.warn('Static API database load failed, using seed data.', error);
+      } finally {
+        if (active) {
+          setLoaded(true);
+        }
+      }
+    }
+
+    loadDatabase();
+
+    return () => {
+      active = false;
+    };
+  }, [loaded]);
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
