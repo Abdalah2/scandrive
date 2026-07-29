@@ -6,9 +6,12 @@ import Card from '../common/Card';
 import { formatPrice } from '../../utils/formatPrice';
 
 export default function CarCard({ car, onToggleFavorite, onToggleCompare, isFavorite, isCompared }) {
+  const fallbackImage = 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=900&q=80';
+  const imageSrc = car.photos?.[0] || fallbackImage;
+
   return (
     <Card className="flex h-full flex-col overflow-hidden p-0">
-      <img src={car.photos?.[0]} alt={`${car.make} ${car.model}`} className="h-48 w-full object-cover" />
+      <img src={imageSrc} alt={`${car.make} ${car.model}`} className="h-48 w-full object-cover" onError={(event) => { event.currentTarget.src = fallbackImage; }} />
       <div className="flex flex-1 flex-col gap-4 p-5">
         <div className="flex items-start justify-between gap-3">
           <div>

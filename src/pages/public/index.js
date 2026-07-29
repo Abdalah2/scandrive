@@ -19,7 +19,6 @@ import { useLanguage } from '../../context/LanguageContext';
 import { formatPrice } from '../../utils/formatPrice';
 import { generateQrUrl } from '../../utils/generateQrUrl';
 import { paginate, useMockApi } from '../../hooks/useMockApi';
-import BrandMark from '../../components/common/BrandMark';
 
 function estimateMarketPrice(car) {
   const agePenalty = Math.max(0.55, 1 - ((2026 - car.year) * 0.045));
@@ -192,7 +191,7 @@ export function LandingPage() {
           <div className="mt-5 space-y-3">
             {featured.slice(0, 2).map((car) => (
               <Link key={car.id} to={`/car/${car.id}`} className="flex items-center gap-4 rounded-3xl border border-slate-200 p-3 transition hover:border-brand-300 hover:bg-brand-50/40">
-                <img src={car.photos?.[0]} alt={car.make} className="h-16 w-20 rounded-2xl object-cover" />
+                <img src={car.photos?.[0] || 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=900&q=80'} alt={car.make} className="h-16 w-20 rounded-2xl object-cover" onError={(event) => { event.currentTarget.src = 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=900&q=80'; }} />
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold text-slate-950">{car.make} {car.model}</p>
                   <p className="text-sm text-slate-500">{car.city} · {formatPrice(car.price)}</p>
