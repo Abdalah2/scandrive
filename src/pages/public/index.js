@@ -11,7 +11,6 @@ import CarCard from '../../components/car/CarCard';
 import CarGallery from '../../components/car/CarGallery';
 import CarSpecsTable from '../../components/car/CarSpecsTable';
 import QRCodeBlock from '../../components/car/QRCodeBlock';
-import Car3DPreview from '../../components/car/Car3DPreview';
 import { useAppData } from '../../context/AppDataContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useCompare } from '../../context/CompareContext';
@@ -47,6 +46,9 @@ export function LandingPage() {
   const navigate = useNavigate();
   const { t, language } = useLanguage();
   const featured = loadedCars.filter((car) => car.featured).slice(0, 3);
+  const loadedHeroCars = Array.isArray(loadedCars) ? loadedCars.filter((car) => car.photos?.length > 0) : [];
+  const heroCars = loadedHeroCars.length > 0 ? loadedHeroCars : cars.filter((car) => car.photos?.length > 0);
+  const [heroIndex, setHeroIndex] = useState(0);
   const stats = [
     { value: `${cars.length}+`, label: t.statsVehicles },
     { value: `${agencies.length}`, label: t.statsAgencies },
@@ -54,9 +56,22 @@ export function LandingPage() {
   ];
   const [search, setSearch] = useState(language === 'ar' ? 'SUV هجينة في تونس' : language === 'en' ? 'Hybrid SUV in Tunis' : 'SUV hybride à Tunis');
 
-  // Get random featured car for background
-  const randomCar = featured.length > 0 ? featured[Math.floor(Math.random() * featured.length)] : null;
-  const bgImage = randomCar?.photos?.[0] || 'https://images.unsplash.com/photo-1552820728-8ac41f1ce891?w=1600&h=700&fit=crop';
+  useEffect(() => {
+    if (!heroCars.length) {
+      setHeroIndex(0);
+      return undefined;
+    }
+
+    setHeroIndex((current) => (current >= heroCars.length ? 0 : current));
+    const interval = window.setInterval(() => {
+      setHeroIndex((current) => (current + 1) % heroCars.length);
+    }, 5000);
+
+    return () => window.clearInterval(interval);
+  }, [heroCars.length]);
+
+  const currentHero = heroCars[heroIndex] || null;
+  const bgImage = currentHero?.photos?.[0] || 'https://images.unsplash.com/photo-1552820728-8ac41f1ce891?w=1600&h=700&fit=crop';
 
   return (
     <div className="space-y-8">
