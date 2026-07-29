@@ -129,6 +129,20 @@
   box-shadow: 0 0 30px rgba(37, 125, 240, 0.3) inset;
 }
 
+button svg,
+a svg {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  transform-origin: center center;
+}
+
+button:hover svg,
+a:hover svg,
+button:focus svg,
+a:focus svg {
+  transform: scale(1.18);
+  opacity: 0.95;
+}
+
 /* Button shine effect */
 @keyframes buttonShine {
   0% {

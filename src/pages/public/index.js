@@ -11,6 +11,7 @@ import CarCard from '../../components/car/CarCard';
 import CarGallery from '../../components/car/CarGallery';
 import CarSpecsTable from '../../components/car/CarSpecsTable';
 import QRCodeBlock from '../../components/car/QRCodeBlock';
+import Car3DPreview from '../../components/car/Car3DPreview';
 import { useAppData } from '../../context/AppDataContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import { useCompare } from '../../context/CompareContext';
